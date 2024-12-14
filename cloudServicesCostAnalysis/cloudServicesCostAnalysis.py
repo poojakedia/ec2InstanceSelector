@@ -1,4 +1,3 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
 from pcconfig import config
 
 import pynecone as pc
@@ -21,6 +20,7 @@ class FormState(pc.State):
     results: list = []
     def handle_submit(self, form_data: dict):
         self.form_data = form_data
+        #handle form data to support querying, explicitly define the exclude toggle
         if(form_data["exclude_comp"] == True):
             comp_reqs = "n"
         else:

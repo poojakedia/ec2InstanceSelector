@@ -15,7 +15,7 @@ memSubquery ="ec2_Instance"
 storSubquery ="ec2_Instance"
 OStype = ""
 def comp_filtration(comp_selection, OStype):
-
+    #query based on number of indicated CPUs
     if(comp_selection == "a"):
         compSubquery = f'''
                     SELECT * FROM ec2_Instance
@@ -48,6 +48,7 @@ def comp_filtration(comp_selection, OStype):
     return cur.fetchall()
 
 def memory_filtration(choice_memory_reqs, OStype):
+    #filter memory requirements based on subquery for computational requirements (if it exists, else it queries from table normally)
     memSubquery = f'''SELECT * FROM {compSubquery}
                         WHERE Instance_Memory == {choice_memory_reqs}
                         ORDER BY {OStype};
@@ -57,6 +58,7 @@ def memory_filtration(choice_memory_reqs, OStype):
     return cur.fetchall()
         
 def storage_filtration(ebs, storage_reqs, OStype):
+    #filter storage requirements here, filter based on whether ebs is selected, use former memory query as a stackable subquery here (if applicable)
     if(ebs):
         storSubquery = f'''SELECT * FROM {memSubquery}
                             WHERE Instance_Storage ==-1.0
@@ -156,6 +158,7 @@ def main():
 
 def filter(OS, choice_compute, choice_memory_reqs, ebs_storage, choice_storage_reqs):
     query_res = []
+    #focus on linux reserved cost for this 
     if(OS.lower() == "linux"):
         OStype = "Linux_Reserved_cost"
         os_col = 7
